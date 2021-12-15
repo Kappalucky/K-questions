@@ -64,6 +64,7 @@ const handleSubmit = () => {
     console.log('Answer all questions before submitting. Unanswered questions are displayed in yellow.')
   } else {
     console.log('sent');
+    grading();
   }
 }
 
@@ -72,6 +73,17 @@ const grading = () => {
   //TODO: If values do not match, add error class and messages to panel
   //TODO: Highlight correct answer based on index of question
   //TODO: If correct, add success class and message to panel
+  let rightAnswerCount = 0;
+
+  for (let index = 0; index < unref(answers).length; index++) {
+    const element = unref(answers)[index];
+    if (element === unref(questionsState)[index].answer) {
+      rightAnswerCount = rightAnswerCount + 1;
+    }
+  }
+
+  console.log(`you got ${rightAnswerCount} out of ${unref(questionsState).length} questions correct`)
+  console.log('percentage: ', (rightAnswerCount/unref(questionsState).length) * 100, '%');
 }
 
 
