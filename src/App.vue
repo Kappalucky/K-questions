@@ -114,8 +114,37 @@ const grading = () => {
 
   for (let index = 0; index < unref(answers).length; index++) {
     const answer = unref(answers)[index];
-    if (answer === unref(questionsState)[index].answer) {
-      rightAnswerCount = rightAnswerCount + 1;
+    const correctAnswer = unref(questionsState)[index].answer;
+
+    const fieldSet = document.getElementById(`Q${index}`);
+    const fieldSetInputs = fieldSet?.getElementsByTagName('input');
+
+    if (answer === correctAnswer) {
+      rightAnswerCount++;
+
+      fieldSet?.classList.remove('ring-gray-900/5')
+      fieldSet?.classList.add('ring-green-400')
+
+      if (fieldSetInputs) {
+        for (let i = 0; i < fieldSetInputs.length; i++) {
+          fieldSetInputs[i].disabled = true;
+        }
+      }
+
+    } else {
+
+      fieldSet?.classList.remove('ring-gray-900/5')
+      fieldSet?.classList.add('ring-red-400')
+
+      if (fieldSetInputs) {
+        for (let i = 0; i < fieldSetInputs.length; i++) {
+          fieldSetInputs[i].disabled = true;
+
+          if (fieldSetInputs[i].value === correctAnswer) {
+            fieldSetInputs[i].parentElement?.classList.add('bg-green-400');
+          }
+        }
+      }
     }
   }
 
