@@ -1,11 +1,13 @@
 <template>
 <div class="min-h-full mt-6">
   <!--<Questions/>-->
-  <h1 class="text-2xl font-semibold">{{titleState}}</h1>
-  <template v-if="results.number !== null">
-    <h4>Results</h4>
+  <h1 class="text-2xl font-semibold my-2">{{titleState}}</h1>
+  <template v-if="results.number !== null" class="my-2">
+    <h4 class="font-medium text-lg underline">Results</h4>
+    <br/>
     <p>You got {{results.number}} / {{questionsState.length}} questions correct</p>
-    <p>{{results.percentage}}<span>&nbsp;%</span></p>
+    <p class="text-red-600 font-semibold">{{results.percentage}}<span>&nbsp;%</span></p>
+    <br/>
   </template>
   <div v-if="questionsState">
     <form @submit.prevent="handleSubmit">
@@ -14,7 +16,7 @@
           <fieldset
             v-for="(question, index) in questionsState"
             :key="index" :id="'Q'+index"
-            class="relative px-6 pt-10 pb-8 bg-white shadow-xl ring-2 xs:max-w-lg md:max-w-full sm:mx-auto rounded-lg sm:px-10"
+            class="relative p-4 bg-white shadow-xl ring-2 xs:max-w-lg md:max-w-full sm:mx-auto rounded-lg sm:px-10"
             :class="[answers[index] !== '' ? 'ring-gray-900/5' : '']"
             >
             <div>
@@ -28,15 +30,16 @@
                 </label>
               </div>
             </div>
+            <p id="answer-status" class="flex justify-end text-sm font-medium"></p>
           </fieldset>
         </div>
-        <p v-if="pageError.active">{{pageError.message}}</p>
+        <p v-if="pageError.active" class="text-red-600 mx-auto px-2">{{pageError.message}}</p>
         <div class="px-4 py-3 text-center sm:px-6 text-base leading-7 font-semibold">
           <button
           type="submit"
           :disabled="results.number !== null"
-          class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          :class="[results.number !== null ? 'bg-gray-600 hover:bg-gray-700' : 'bg-indigo-600 hover:bg-indigo-700']"
+          class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+          :class="[results.number !== null ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-600']"
           >
             Submit
           </button>
@@ -107,9 +110,6 @@ const handleSubmit = () => {
 
 const grading = () => {
   /* Each answer in answers array is checked against questionState.answer. Values are calculated based on returned count */
-  //TODO: If values do not match, add error class and messages to panel
-  //TODO: Highlight correct answer based on index of question
-  //TODO: If correct, add success class and message to panel
   let rightAnswerCount = 0;
 
   for (let index = 0; index < unref(answers).length; index++) {
@@ -117,13 +117,19 @@ const grading = () => {
     const correctAnswer = unref(questionsState)[index].answer;
 
     const fieldSet = document.getElementById(`Q${index}`);
+    const answerStatus = fieldSet?.querySelector('#answer-status');
     const fieldSetInputs = fieldSet?.getElementsByTagName('input');
 
     if (answer === correctAnswer) {
       rightAnswerCount++;
 
       fieldSet?.classList.remove('ring-gray-900/5')
-      fieldSet?.classList.add('ring-green-400')
+      fieldSet?.classList.add('ring-green-500')
+
+      if (answerStatus) {
+        answerStatus.classList.add('text-green-500');
+        answerStatus.innerHTML = "Correct"
+      }
 
       if (fieldSetInputs) {
         for (let i = 0; i < fieldSetInputs.length; i++) {
@@ -132,17 +138,18 @@ const grading = () => {
       }
 
     } else {
-
       fieldSet?.classList.remove('ring-gray-900/5')
-      fieldSet?.classList.add('ring-red-400')
+      fieldSet?.classList.add('ring-red-600')
+
+      if (answerStatus) {
+        answerStatus.classList.add('text-red-600');
+        answerStatus.innerHTML = "Wrong"
+      }
 
       if (fieldSetInputs) {
         for (let i = 0; i < fieldSetInputs.length; i++) {
           fieldSetInputs[i].disabled = true;
-
-          if (fieldSetInputs[i].value === correctAnswer) {
-            fieldSetInputs[i].parentElement?.classList.add('bg-green-400');
-          }
+          fieldSetInputs[i].value === correctAnswer ? fieldSetInputs[i].parentElement?.classList.add('bg-green-500') : '';
         }
       }
     }
