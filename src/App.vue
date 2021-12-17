@@ -73,22 +73,18 @@ const results = reactive({
 })
 
 const choices = computed(() => {
-  return unref(questionsState).map((question: any) => {
-    return question.choices;
-  })
+  return unref(questionsState).map((question: any) => question.choices)
 })
 
 const handleSubmit = () => {
-  /* If answer relating to position of answers array is empty, add error and styling */
+  /* If answer relating to position in answers array is empty, add error and styling */
 
   //* Clears unanswered array on every call before checking answers to avoid joining multiple calls
   unanswered.value = [];
 
   for (let index = 0; index < unref(answers).length; index++) {
     const answer = unref(answers)[index];
-    if (answer === '') {
-      unref(unanswered).push(index);
-    }
+    answer === '' ? unref(unanswered).push(index) : '';
   }
 
   if (unref(unanswered).length != 0) {
@@ -108,55 +104,77 @@ const handleSubmit = () => {
   }
 }
 
+const getFieldElements = (index: number) => {
+  const fieldSet = document.getElementById(`Q${index}`);
+  const answerStatus = fieldSet?.querySelector('#answer-status');
+  const fieldSetInputs = fieldSet?.getElementsByTagName('input');
+
+  return { fieldSet, answerStatus, fieldSetInputs }
+}
+
+const correctAnswerStyling = (index: number) => {
+
+  let {fieldSet, answerStatus, fieldSetInputs} = getFieldElements(index)
+
+  fieldSet?.classList.remove('ring-gray-900/5')
+  fieldSet?.classList.add('ring-green-500')
+
+  if (answerStatus) {
+    answerStatus.classList.add('text-green-500');
+    answerStatus.innerHTML = "Correct"
+  }
+
+  if (fieldSetInputs) {
+    for (let i = 0; i < fieldSetInputs.length; i++) {
+      fieldSetInputs[i].disabled = true;
+    }
+  }
+}
+
+const incorrectAnswerStyling = (index: number, correctAnswer: string) => {
+
+  let {fieldSet, answerStatus, fieldSetInputs} = getFieldElements(index)
+
+  fieldSet?.classList.remove('ring-gray-900/5')
+  fieldSet?.classList.add('ring-red-600')
+
+  if (answerStatus) {
+    answerStatus.classList.add('text-red-600');
+    answerStatus.innerHTML = "Wrong"
+  }
+
+  if (fieldSetInputs) {
+    for (let i = 0; i < fieldSetInputs.length; i++) {
+      fieldSetInputs[i].disabled = true;
+      fieldSetInputs[i].value === correctAnswer ? fieldSetInputs[i].parentElement?.classList.add('bg-green-500') : '';
+    }
+  }
+}
+
 const grading = () => {
-  /* Each answer in answers array is checked against questionState.answer. Values are calculated based on returned count */
+  /*
+  Each answer in answers array is checked against questionState.answer. Values are calculated based on returned count
+  Based on answer value, update styling for fieldset group and each input within the fieldset
+  */
   let rightAnswerCount = 0;
 
   for (let index = 0; index < unref(answers).length; index++) {
     const answer = unref(answers)[index];
     const correctAnswer = unref(questionsState)[index].answer;
 
-    const fieldSet = document.getElementById(`Q${index}`);
-    const answerStatus = fieldSet?.querySelector('#answer-status');
-    const fieldSetInputs = fieldSet?.getElementsByTagName('input');
-
     if (answer === correctAnswer) {
       rightAnswerCount++;
-
-      fieldSet?.classList.remove('ring-gray-900/5')
-      fieldSet?.classList.add('ring-green-500')
-
-      if (answerStatus) {
-        answerStatus.classList.add('text-green-500');
-        answerStatus.innerHTML = "Correct"
-      }
-
-      if (fieldSetInputs) {
-        for (let i = 0; i < fieldSetInputs.length; i++) {
-          fieldSetInputs[i].disabled = true;
-        }
-      }
-
+      correctAnswerStyling(index);
     } else {
-      fieldSet?.classList.remove('ring-gray-900/5')
-      fieldSet?.classList.add('ring-red-600')
-
-      if (answerStatus) {
-        answerStatus.classList.add('text-red-600');
-        answerStatus.innerHTML = "Wrong"
-      }
-
-      if (fieldSetInputs) {
-        for (let i = 0; i < fieldSetInputs.length; i++) {
-          fieldSetInputs[i].disabled = true;
-          fieldSetInputs[i].value === correctAnswer ? fieldSetInputs[i].parentElement?.classList.add('bg-green-500') : '';
-        }
-      }
+      incorrectAnswerStyling(index, correctAnswer);
     }
   }
 
   results.number = rightAnswerCount;
   results.percentage = (rightAnswerCount / unref(questionsState).length) * 100;
+
+  //* Scroll to top of page
+  window.scrollTo(0,0);
 }
 
 onMounted(() => {
