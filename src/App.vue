@@ -23,7 +23,7 @@
               <legend class="text-left font-medium text-gray-900"><span>{{index + 1}}.&nbsp;</span>{{question.question}}</legend>
             </div>
             <div class="mt-4 space-y-4">
-              <div class="flex items-center" v-for="(choice, i) in choices[index]" :key="i">
+              <div class="flex items-center p-2 rounded-lg" v-for="(choice, i) in choices[index]" :key="i">
                 <input :id="'Q' + index + i" :name="'Q' + index" type="radio" :value="choice" v-model="answers[index]" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"/>
                 <label :for="'Q' + index + i" class="ml-3 block text-sm font-medium text-gray-700">
                   {{choice}}
