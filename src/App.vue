@@ -58,22 +58,33 @@ import {questions as Q, title} from '@/assets/questions.json';
 //* Local components
 import Questions from "./components/Questions.vue";
 
+//* Typescript interfaces
+interface Choices {
+  [index: number]: string[]
+}
+
+interface Question {
+  answer: string;
+  question: string;
+  choices: Choices
+}
+
 //* Initialize variables & functions
-const questionsState = ref(Q as any)
-const titleState = ref(title);
-const answers = ref([] as any)
-const unanswered = ref([] as any)
+const questionsState = ref(Q as [] as Question[])
+const titleState = ref(title as string);
+const answers = ref([] as string[])
+const unanswered = ref([] as number[])
 const pageError = reactive({
-  message: '',
-  active: false
+  message: '' as string,
+  active: false as boolean
 });
 const results = reactive({
   number: null as null | number,
   percentage: null as null | number
-})
+});
 
 const choices = computed(() => {
-  return unref(questionsState).map((question: any) => question.choices)
+  return unref(questionsState).map((question: Question) => question.choices)
 })
 
 const handleSubmit = () => {
@@ -178,7 +189,7 @@ const grading = () => {
 }
 
 onMounted(() => {
-  unref(questionsState).forEach(() => answers.value.push(''));
+  unref(questionsState).forEach(() => unref(answers).push(''));
 })
 </script>
 
