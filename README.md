@@ -1,24 +1,25 @@
-# k-questions
+# KQuestions
 
-## Project setup
-```
-npm install
-```
+This folder contains the Vue 3 built frontend for a simple multiple choice quiz
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Getting Started
+#### Prerequisites
 
-### Compiles and minifies for production
-```
-npm run build
-```
+- [Node](https://nodejs.org/en/)
+- [npm](https://npmjs.com/en/)
 
-### Lints and fixes files
-```
-npm run lint
-```
+#### Installation
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+1.  Install prerequisites if you have not already
+2.  Install all package requirements
+	```
+	npm install
+	```
+3.  Start development server
+	```
+	npm run serve
+	```
+4.  Build it if you'd like
+	```
+	npm run build
+	```

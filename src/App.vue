@@ -1,6 +1,5 @@
 <template>
 <div class="min-h-full mt-6">
-  <!--<Questions/>-->
   <h1 class="text-2xl font-semibold my-2">{{titleState}}</h1>
   <template v-if="results.number !== null" class="my-2">
     <h4 class="font-medium text-lg underline">Results</h4>
@@ -54,9 +53,6 @@
 //* System imports
 import { ref, reactive, onMounted, computed, unref } from "vue";
 import {questions as Q, title} from '@/assets/questions.json';
-
-//* Local components
-import Questions from "./components/Questions.vue";
 
 //* Typescript interfaces
 interface Choices {
